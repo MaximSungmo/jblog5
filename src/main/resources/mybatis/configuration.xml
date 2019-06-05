@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<!-- 마이바티스 상에서 alias는 꼭 소문자로 작성해야함 -->
+		<!-- 맵퍼의 alias로 설정해준 Vo를 참조함 -->
+		<typeAlias alias="uservo" type="com.cafe24.jblog.vo.UserVo"/>
+    	<typeAlias alias="blogvo" type="com.cafe24.jblog.vo.BlogVo"/>
+    	<typeAlias alias="categoryvo" type="com.cafe24.jblog.vo.CategoryVo"/>
+    	<typeAlias alias="postvo" type="com.cafe24.jblog.vo.PostVo"/>
+    	<typeAlias alias="pagevo" type="com.cafe24.jblog.vo.PageVo"/>
+    	
+    </typeAliases>	
+    
+	<mappers>
+		<mapper resource="mybatis/mapper/user.xml" />
+		<mapper resource="mybatis/mapper/blog.xml" />	
+	</mappers>
+	
+</configuration>

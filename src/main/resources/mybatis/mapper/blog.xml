@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="blog">
+
+	
+
+	<!--  
+	<resultMap type="blogvo" id="blogvo1">
+		<result column="id" property="id" />
+		<result column="title" property="title" />
+		<result column="logo" property="logo" />
+	</resultMap>
+	<resultMap type="categoryvo" id="categoryvo1">
+		<result column="no" property="no" />
+		<result column="name" property="name" />
+		<result column="description" property="description" />
+		<result column="reg_date" property="reg_date" />
+		<collection property="blogvo1" resultMap="blogvo1"/>
+	</resultMap>
+	
+	<select id="getById" resultMap="categoryvo1" parameterType='blogvo'>
+		<![CDATA[
+			select b.id, b.title, b.logo, c.no, c.name, c.description, c.reg_date from blog b, category c where c.id=b.id and b.id=010;
+		]]>
+	</select>
+	-->
+	<select id="getById" resultType="blogvo" parameterType='string'>
+		<![CDATA[
+			select * from blog where id=#{id};
+		]]>
+	</select>
+	
+	<select id="getById_cat" resultType="categoryvo" parameterType='string'>
+		<![CDATA[
+			select * from category where id=#{id};
+		]]>
+	</select>
+	
+	<insert id="insertCategory" parameterType='categoryvo'>
+		<![CDATA[
+			insert into category values(null, #{name }, #{description }, now(), #{id});
+		]]>
+	</insert>
+	
+	<insert id="insertPost" parameterType='postvo'>
+		<![CDATA[
+			insert into post values(null, #{title }, #{content }, now(), #{category_no});
+		]]>
+	</insert>
+	
+	
+	<select id="getCategoryList" resultType="categoryvo" parameterType="string">
+		<![CDATA[
+			select c.no, c.name, c.description, c.id, count(p.no) as countPost
+			from category c left join post p 
+			on c.no = p.category_no
+			where c.id=#{id} group by c.no;		
+		]]>
+	</select>
+	
+	 <select id="getFirstCategoryNoById" resultType="long" parameterType="string">
+		<![CDATA[
+			select no from category where id=#{id} order by reg_date asc limit 1;
+		]]>
+	</select>
+		
+	<select id="getBlog" resultType="blogvo" parameterType="string">
+		<![CDATA[
+			select id, title, logo from blog where id=#{id }; 
+		]]>
+	</select>
+
+	<select id="getPostList" resultType="postvo" parameterType="map">
+		<![CDATA[
+			select p.no, p.title, p.content, p.reg_date, p.category_no
+			from category c, user u, post p 
+			where c.id=u.id and c.no=p.category_no and u.id=#{id} and p.category_no=#{categoryNo}
+			order by p.reg_date desc
+			limit #{startContentNo}, #{contentPerPage};
+		]]>
+	</select>
+	
+	<select id="getPost" resultType="postvo" parameterType="map">
+		<![CDATA[
+			select p.no, p.title, p.content, p.reg_date, p.category_no
+			from category c, user u, post p 
+			where c.id=u.id and c.no=p.category_no and u.id=#{id} and p.no=#{postNo};
+		]]>
+	</select>
+	
+	 <select id="getFirstPostNoByCategory" resultType="long" parameterType="long">
+		<![CDATA[
+			select no, title, content, reg_date, category_no from post where category_no=#{categoryNo} order by reg_date asc limit 1;
+		]]>
+	</select>	
+	
+	
+	<update id="updatePostCategoryNo" parameterType="categoryvo">
+		<![CDATA[
+			update post
+			set category_no = #{categoryNo} 
+			where category_no =  #{no}
+		]]>
+	</update>
+	
+	<delete id="deleteCategory" parameterType="long">
+		<![CDATA[
+			delete from category where no=#{no}
+		]]>
+	</delete> 
+	
+	<update id="updateBlog" parameterType="blogvo">
+		<![CDATA[
+			update blog
+			set title = #{title}, logo = #{logo}
+			where id=#{id}
+		]]>
+	</update>
+	<update id="updateBlogTitle" parameterType="blogvo">
+		<![CDATA[
+			update blog
+			set title = #{title}
+			where id=#{id}
+		]]>
+	</update>
+	
+	
+	<select id="totalContentCount" resultType='int' parameterType='long'>
+		<![CDATA[
+			select count(*) as totalContentCount from post where category_no = #{category_no} group by category_no ;
+		]]>
+	</select>
+
+</mapper>
